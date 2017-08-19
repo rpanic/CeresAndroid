@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="rpanic1308.ceres">
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_cerespurple2"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <service android:name="org.rpanic1308.ceres.SpeechService" />
+        <service android:name="org.rpanic1308.ceres.DisplaySpeechService" />
+        <service android:name="org.rpanic1308.notifications.NotificationService"/>
+        <service android:name="org.rpanic1308.moroUbernahme.HomeActivationService"/>
+
+        <activity
+            android:name="org.rpanic1308.ceres.MainFeedActivity"
+            android:label="Ceres"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:label="@string/app_name" android:name="ai.kitt.snowboy.Demo" android:windowSoftInputMode="adjustResize">
+
+        </activity>
+
+        <receiver android:name="org.rpanic1308.ceres.DisplayReciever">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.rpanic1308.moroUbernahme.OnOffReciever"
+            android:enabled="true"/>
+        <receiver android:name="org.rpanic1308.snowboyNotification.SnowboyNotificationReciever" android:enabled="true"/>
+
+        <activity
+            android:name="org.rpanic1308.ceres.ManuellActivity"
+            android:label="@string/title_activity_manuell"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+            <receiver android:name="org.rpanic1308.widget.CeresAppWidget">
+                <intent-filter>
+                    <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                </intent-filter>
+
+                <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/ceres_app_widget_info" />
+            </receiver>
+
+        <activity
+            android:name="org.rpanic1308.settings.SettingsActivity"
+            android:label="Einstellungen" />
+
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+    </application>
+
+</manifest>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<EditTextPreference android:id="@+id/pref_server"
+    android:title="Server Addresse"
+    android:defaultValue="10.0.0.49"
+    android:key="pref_server"/>
+
+<EditTextPreference android:key="wlanssid"
+    android:id="@+id/wlanssid"
+    android:title="Home Wlan SSID"
+    android:visibility="visible"
+    android:defaultValue="@string/wlanssidDefault"/>
+
+<EditTextPreference android:key="snowboySensitivity"
+    android:id="@+id/snowboySensitivity"
+    android:title="Sensitivity von Snowboy"
+    android:visibility="visible"/>
+
+
+<CheckBoxPreference android:title="running" android:summary="Snowboy is on or off" android:key="onoff" android:defaultValue="false" android:visibility="invisible"/>
+<EditTextPreference android:key="feed"
+    android:id="@+id/feedPrefs"
+    android:title="Feed Saver"
+    android:visibility="invisible"/>
+
+</PreferenceScreen>

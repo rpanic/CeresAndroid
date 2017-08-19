@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textViewTitle"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textViewTitle"
+        android:id="@+id/textViewArtist"
+        android:layout_below="@+id/textViewTitle"
+        android:textColor="?attr/actionMenuTextColor" />
+
+    <ImageButton
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_media_next"
+        android:id="@+id/imageButtonNext"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/textViewArtist"
+        style="@android:style/Widget.DeviceDefault.ImageButton"
+        android:background="@android:color/transparent"
+        android:layout_width="60dp"
+        android:tint="?android:attr/editTextColor"
+        android:backgroundTint="?android:attr/editTextColor" />
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:id="@+id/imageButtonPlay"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/imageButtonNext"
+        android:layout_alignBottom="@+id/imageButtonNext"
+        android:background="@android:color/transparent"
+        android:tint="?android:attr/editTextColor"
+        android:backgroundTint="?android:attr/editTextColor" />
+</RelativeLayout>

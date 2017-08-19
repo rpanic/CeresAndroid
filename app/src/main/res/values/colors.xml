@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#f3f3f3</color>
+    <color name="colorFAB">#FF7600</color>
+    <color name="colorFABDark">#B35300</color>
+    <color name="colorSpeechActive">#303F9F</color>
+    <color name="colorSpeechNotActive">#005555</color>
+</resources>

@@ -1,0 +1,76 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "rpanic1308.ceres"
+        minSdkVersion 22
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a","x86"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+        }
+    }
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/layouts/layouts_category2',
+                            'src/main/res/layouts',
+                            'src/main/res'
+                    ]
+        }
+    }
+
+}
+
+repositories{
+    flatDir {
+        dirs 'libs'
+    }
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    //compile 'at.blogc:expandabletextview:1.0.3'
+    compile files('libs/commons-codec-1.5.jar')
+    compile files('libs/lucene-snowball-3.0.3.jar')
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+    compile 'com.ms-square:expandableTextView:0.1.4'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.toptoche.searchablespinner:searchablespinnerlibrary:1.3.1'
+
+    //Spotify
+    compile 'com.spotify.sdk:spotify-auth:1.0.0@aar'
+    compile 'com.spotify.sdk:spotify-player:24-noconnect-2.20b@aar'
+
+    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
+
+    //compile('se.michaelthelin.spotify:spotify-web-api-java:1.5.0') {
+     //   exclude group: "commons-beanutils", module: "commons-beanutils"
+
+    //}
+    //compile 'commons-beanutils:commons-beanutils:20030211.134440'
+
+
+    testCompile 'junit:junit:4.12'
+}
