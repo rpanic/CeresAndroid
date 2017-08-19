@@ -2,6 +2,7 @@ package org.rpanic1308.ceres;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,7 +20,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.rpanic1308.loadingScreen.LoadingActivity;
 import org.rpanic1308.moroUbernahme.HomeActivationService;
 import org.rpanic1308.moroUbernahme.Methods;
 import org.rpanic1308.moroUbernahme.OnOffReciever;
@@ -72,9 +77,14 @@ import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
 public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
+    public static final String VERSION = "0.5 pre";
+
     ImageButton speakButton;
     public static MainFeedActivity mainActivity;
     private List<FeedItem> feedItems = new ArrayList<>();
+
+    private Player mPlayer;
+    private String spotifyToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,60 +92,32 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         setContentView(R.layout.activity_feed_main);
         mainActivity = this;
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setImageDrawable(getDrawable(android.R.drawable.ic_menu_manage));
-        fab.setBackgroundColor(ContextCompat.getColor(mainActivity, R.color.colorFAB));
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onManuellPressed();
-            }
-        });*/
+        //Transition
+        Slide slide = new Slide(Gravity.RIGHT);
+        getWindow().setEnterTransition(slide);
 
-//        Button b = (Button) findViewById(R.id.fab);
-//        b.setOnClickListener(new View.OnClickListener() {
-//           @Override
-//           public void onClick(View view) {
-//               onManuellPressed();
-//           }
-//       });
+        getWindow().setExitTransition(new Explode());
 
         speakButton = (ImageButton)findViewById(R.id.imageButton);
 
+        //Window Settings
         Window window = this.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorFABDark));
-        //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
+        //Spotify
+        addSpotifyCallbacks(getIntent().getStringExtra("spotifyToken"));
 
-        //String[] arr = new String[]{"asdasd", "adsgfsadg","asdasd", "adsgfsadg","asdasd", "adsgfsadg","asdasd", "adsgfsadg","asdasd", "adsgfsadg"};
-        //((ListView)findViewById(R.id.list)).setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,arr));
-        addDefaultListContent();
+        CeresController.init(this);
 
-        //new SpeechTest().s(this);
-
-        boolean alreadyGranted = initPermissions();
-
+        //Snowboy Sensitivity für die Constants
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-       // SharedPreferences.Editor editor = prefs.edit();
-        //editor.putBoolean("running", true);
-        //editor.apply();
-        //Intent i = new Intent(this, OnOffReciever.class);
-        //Methods.displayNotification(this, PendingIntent.getBroadcast(this, 1111, i, 0));
-
 
         Constants.sensitivity = prefs.getString("snowboySensitivity", Constants.sensitivity);
 
-        if(alreadyGranted){
-            CeresController.init();
-        }
-
-        //onManuellPressed(null);
 
         SnowboyMaster.startSnowBoy(new SnowboyListener() {
             @Override
@@ -160,13 +142,42 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
             }
         });
 
-        SpotifyIntents.authenticate(this);
-
-        //TODO Notification für abschalten von Snowboy  - vllt im SnowboyMaster   X
-
         //Intent service = new Intent(this, HomeActivationService.class);
         //startService(service);
         //TODO Service wieder aktivieren aber vllt noch verbessern
+
+    }
+
+    public void addSpotifyCallbacks(String givenToken){
+        spotifyToken = (spotifyToken != null && !spotifyToken.equals("")) ? spotifyToken : givenToken;
+        Config playerConfig = new Config(this, spotifyToken, SpotifyIntents.ClientID);
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                SpotifyIntents.setSpotifyPlayer(mPlayer);
+                mPlayer.addConnectionStateCallback(MainFeedActivity.this);
+                mPlayer.addNotificationCallback(MainFeedActivity.this);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
+
+        SpotifyIntents.setAccessToken(spotifyToken);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -378,36 +389,6 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         return ret;
     }
 
-    public void addDefaultListContent(){
-
-        List<FeedItem> list = FeedSaver.loadList();
-
-        ListView lv = (ListView) findViewById(R.id.list);
-        /*List<FeedItem> list = new ArrayList();
-
-            FeedItem item = new FeedItem();
-            item.setContent("Hallo;Hallo mein Name ist Raphael, Das ist ein Text\nNeue Zeile xDxDxD\nHallo mein Name ist Raphael, Das ist ein Text\n" +
-                    "Neue Zeile xDxDxD\nHallo mein Name ist Raphael, Das ist ein Text\n" +
-                    "Neue Zeile xDxDxD");
-            item.setType("text");
-            list.add(item);
-
-            item = new FeedItem();
-            item.setContent("Hallo;Das ist der zweite text\nNeue Zeile xDxDxD");
-            item.setType("text");
-            list.add(item);*/
-
-       /*FeedItem item = new FeedItem();
-        item.setContent("Image;Image2");
-        item.setType("img");
-        list.add(item);*/
-
-        feedItems.addAll(list);
-        Collections.sort(feedItems, new FeedItem.FeedComparator());
-
-        lv.setAdapter(new FeedAdapter(this, android.R.layout.simple_list_item_1, list));
-    }
-
     public void addTextView(){
 
         ListView lv = (ListView) findViewById(R.id.list);
@@ -450,15 +431,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         startActivity(i);
     }
 
-    public boolean initPermissions(){
-        String[] arr = new String[]{
-            Manifest.permission.INTERNET, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE
 
-        };
-
-        return initPermission(arr);
-    }
 
     @Override
     protected void onPause() {
@@ -474,37 +447,6 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         //Methods.destroyNotification(this);
         SnowboyNotificationHandler.getInstance(this).destroyNotification();
         SnowboyMaster.stopRecording();
-    }
-
-    private boolean initPermission(String[] arr){
-
-        ArrayList<String> requests = new ArrayList<>();
-        for(String s : arr){
-            if (ContextCompat.checkSelfPermission(this,
-                    s)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requests.add(s);
-            }
-        }
-
-        if(!requests.isEmpty()){
-            ActivityCompat.requestPermissions(this,
-                    requests.toArray(new String[requests.size()]),
-                    1337);
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(requestCode == 1337){
-            System.out.println("Permissions granted");
-            CeresController.init();
-        }
     }
 
     @Override
@@ -527,53 +469,6 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
     //**************************
     //        Spotify
     //**************************
-
-
-    private Player mPlayer;
-    private String token;
-
-//AQDb2Bw6X8ft1KHdaCLkw8BdjbtnD0ZyT4avyWI9h3xKeWx7MC4II03Qi-OFbgAFpRKszz0y9-vqTjb3eRDipIQF8NZum0Mq3uMFy4oCOVjYBVa5O9Co5RKA-qyT5hqLXVOPUtaXYyiz4aFYEZMiIjEeskbW6yms_eRTzhvERV8Om9nk4lp4oKxhXMI
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), SpotifyIntents.ClientID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        mPlayer = spotifyPlayer;
-                        mPlayer.addConnectionStateCallback(MainFeedActivity.this);
-                        mPlayer.addNotificationCallback(MainFeedActivity.this);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
-                token = playerConfig.oauthToken;
-                SpotifyIntents.setAccessToken(token);
-
-            }
-        }
-    }
-
-    public void authenticate(){
-
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(SpotifyIntents.ClientID,
-                AuthenticationResponse.Type.TOKEN,
-                SpotifyIntents.REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
-
-    }
 
 
 
@@ -610,7 +505,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
 
     @Override
     public void onLoginFailed(Error error) {
-        Log.d("MainActivity", "Login failed");
+        Log.d("MainActivity", "Spotify Login failed");
     }
 
     @Override

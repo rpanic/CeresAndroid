@@ -47,7 +47,7 @@ public class TextListener implements ServerListener{
 			if(fis == null){
 				return;
 			}
-			SpotifyMusicPlayer.getInstance(MainFeedActivity.mainActivity).interrupt(fis);
+			SpotifyMusicPlayer.getInstance().interrupt(fis);
 		}
 	}
 	

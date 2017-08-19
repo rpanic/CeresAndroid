@@ -142,29 +142,30 @@ public class TransmissionHelper {
 		currentThread = Thread.currentThread();
 		checkingThread = new Thread(new Runnable() {
 			public void run() {
-					while (true) {
 
-						//Data is Timestamp from last feedItem
-						FeedItem item = MainFeedActivity.mainActivity.getLastFeedItem();
-						String data;
-						if(item != null){
-							data = Long.toString(item.getTimeStamp());
-						}else{
-							data = Long.toString(System.currentTimeMillis());
-						}
+			while (true) {
 
-						sendToServer(new AppToServerInfo(AppToServerInfo.TransType.CHECKFORUPDATES, data, CeresController.CLIENTID));
+				//Data is Timestamp from last feedItem
+				FeedItem item = MainFeedActivity.mainActivity.getLastFeedItem();
+				String data;
+				if(item != null){
+					data = Long.toString(item.getTimeStamp());
+				}else{
+					data = Long.toString(System.currentTimeMillis());
+				}
 
-						try {
-							synchronized (currentThread){
-								currentThread.wait(10000L);
-								Thread.sleep(300L);
-							}
+				sendToServer(new AppToServerInfo(AppToServerInfo.TransType.CHECKFORUPDATES, data, CeresController.CLIENTID));
 
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+				try {
+					synchronized (currentThread){
+						currentThread.wait(10000L);
+						Thread.sleep(300L);
 					}
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 			}
 		});
 		checkingThread.start();

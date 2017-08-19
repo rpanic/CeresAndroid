@@ -25,7 +25,7 @@ public class MusicListener implements ServerListener {
 		if(info.getType() == org.rpanic1308.transmission.ServerToAppInfo.TransType.AudioInfo){
 			
 			AudioInfo audio = info.getAudioInfo();
-			SpotifyMusicPlayer player = SpotifyMusicPlayer.getInstance(MainFeedActivity.mainActivity);
+			SpotifyMusicPlayer player = SpotifyMusicPlayer.getInstance();
 			
 			switch(audio.getType()){
 			case CLEARQUEUE:

@@ -18,18 +18,18 @@ public class CeresController {
     public static int SERVER_PORT = 1337;
     public static String baseDirectory = getDirectory();
     public static final String CLIENTID = getMacAddress();
-    public static String SERVER = getServerAddress();
+    public static String SERVER = null;
 
     /** Is being called when a new input message is spoken or typed and the message is forwarded to the server*/
     public static void inputMessage(String s){
         TransmissionHelper.sendSentenceToServer(s);
     }
 
-    public static void init(){
+    public static void init(Context c){
 
         if(SERVER == null){
             Config.write("server_address", "10.0.0.23");
-            SERVER = getServerAddress();
+            SERVER = getServerAddress(c);
         }
         if(baseDirectory == null){
             baseDirectory = getDirectory();
@@ -79,13 +79,12 @@ public class CeresController {
         return macString;*/
     }
 
-    public static String getServerAddress() {
-        //return "10.0.0.49";
-        //return "rpanic.ddns.net";
-        //return Config.getString("server_address");
+    public static String getServerAddress(Context c) {
 
-        //TODO WEGEN Debuging weg
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainFeedActivity.mainActivity);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(c);
+
+        //TODO Prüfen ob null
+
         return pref.getString("pref_server", Config.getString("server_address"));
     }
 

@@ -55,8 +55,10 @@ public class SnowboyMaster {
     }
 
     public static void stopRecording(){
-        thread.stopRecording();
-        Log.d("CERES", "StopRecording1");
+        if(thread != null) {
+            thread.stopRecording();
+            Log.d("CERES", "StopRecording1");
+        }
     }
 
     public static void stopRecording(SnowboyListener callback){

@@ -18,6 +18,7 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import org.rpanic1308.ceres.MainFeedActivity;
+import org.rpanic1308.loadingScreen.LoadingActivity;
 import org.rpanic1308.music.AudioInfo;
 
 import java.util.Arrays;
@@ -72,12 +73,6 @@ public class SpotifyIntents{
         TracksPager pager = spotify.searchTracks(query, options);
 
         return pager.tracks.items.get(0).uri;
-
-    }
-
-    public static void authenticate(MainFeedActivity activity){
-
-        activity.authenticate();
 
     }
 

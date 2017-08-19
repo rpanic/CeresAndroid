@@ -7,4 +7,7 @@
     <color name="colorFABDark">#B35300</color>
     <color name="colorSpeechActive">#303F9F</color>
     <color name="colorSpeechNotActive">#005555</color>
+    <color name="purpleDark">#801585</color>
+    <color name="purpleMedium">#A21BA8</color>
+    <color name="purpleLight">#C481C8</color>
 </resources>

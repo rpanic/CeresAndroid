@@ -1,5 +1,6 @@
 package org.rpanic1308.music;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -10,6 +11,7 @@ import com.spotify.sdk.android.player.Player;
 import org.rpanic1308.ceres.MainFeedActivity;
 import org.rpanic1308.feed.FeedItem;
 import org.rpanic1308.feed.FeedSaver;
+import org.rpanic1308.loadingScreen.LoadingActivity;
 import org.rpanic1308.spotify.SpotifyIntents;
 
 import java.io.FileInputStream;
@@ -26,9 +28,7 @@ public class SpotifyMusicPlayer {
     MediaPlayer interrupt;
     static SpotifyMusicPlayer instance;
 
-    public SpotifyMusicPlayer(MainFeedActivity activity){
-
-        SpotifyIntents.authenticate(activity);
+    public SpotifyMusicPlayer(){
 
     }
 
@@ -148,9 +148,9 @@ public class SpotifyMusicPlayer {
         setLineGain(getLineGain(c) + add ,c);
     }
 
-    public static SpotifyMusicPlayer getInstance(MainFeedActivity activity){
+    public static SpotifyMusicPlayer getInstance(){
         if(instance == null)
-            instance = new SpotifyMusicPlayer(activity);
+            instance = new SpotifyMusicPlayer();
         return instance;
     }
 

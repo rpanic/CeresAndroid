@@ -27,7 +27,7 @@ public class SettingsActivity extends PreferenceActivity/*extends AppCompatActiv
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CeresController.SERVER = CeresController.getServerAddress();
+        CeresController.SERVER = CeresController.getServerAddress(this);
     }
 
     /*private Preference pref;
