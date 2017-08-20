@@ -6,6 +6,9 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import org.rpanic1308.snowboyNotification.SnowboyNotification;
+import org.rpanic1308.snowboyNotification.SnowboyNotificationHandler;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -78,6 +81,7 @@ public class RecordingThreadCopy {
 
     public void stopRecording() {
         shouldContinue = false;
+        stopCallback = null;
 
         if (thread == null)
             return;
@@ -88,6 +92,8 @@ public class RecordingThreadCopy {
     private void record() {
         Log.v(TAG, "Start");
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+
+        SnowboyNotificationHandler.getInstance(null).updateNotification();
 
         // Buffer size in bytes: for 0.1 second of audio
         int bufferSize = (int)(Constants.SAMPLE_RATE * 0.1 * 2);
@@ -155,6 +161,8 @@ public class RecordingThreadCopy {
         if (null != listener) {
             listener.stop();
         }
+
+        SnowboyNotificationHandler.getInstance(null).updateNotification(); //Context darf null sein, weil sonst updateNotification nicht gehen würde
 
         if(stopCallback != null){
             stopCallback.callback(null);

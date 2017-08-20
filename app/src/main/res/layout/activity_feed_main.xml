@@ -11,22 +11,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.rpanic1308.ceres.MainFeedActivity">
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButton"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textView"
-        />
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list"
         android:layout_below="@+id/imageButton"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="?attr/colorControlActivated" />
 
     <!--<android.support.design.widget.FloatingActionButton
@@ -47,12 +38,11 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/imageButton"
         android:id="@+id/editTextInput"
-        android:layout_toStartOf="@+id/fab"
         android:inputType="text"
         android:hint="Input"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/button"
@@ -63,9 +53,26 @@
         android:layout_marginStart="12dp"
         android:layout_toEndOf="@+id/editTextInput"
         android:onClick="onManuellPressed"
-        android:text="Prefs" />
+        android:text="Prefs"
+        android:transitionName="robot"/>
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/editTextInput"
+        android:clickable="true"
+        android:tint="@android:color/background_light"
+        android:onClick="onSpeakClick"
+        app:backgroundTint="@color/purpleDark"
+        app:elevation="0dp"
+        app:fabSize="normal"
+        app:srcCompat="@mipmap/ic_done_black_24dp"
+        android:transitionName="robot"/>
+
+    <!--<ImageButton
         android:id="@+id/imageButton"
         style="@android:style/Widget.Material.ImageButton"
         android:layout_width="300dp"
@@ -75,6 +82,6 @@
         android:backgroundTint="@color/colorAccent"
         android:onClick="onSpeakClick"
         android:scaleType="fitCenter"
-        app:srcCompat="@android:drawable/ic_btn_speak_now" />
+        app:srcCompat="@android:drawable/ic_btn_speak_now" />-->
 
 </RelativeLayout>

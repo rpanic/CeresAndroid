@@ -26,16 +26,19 @@
             android:name="org.rpanic1308.ceres.MainFeedActivity"
             android:label="Ceres"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--<intent-filter>
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name="ai.kitt.snowboy.Demo"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <receiver android:name="org.rpanic1308.ceres.DisplayReciever">
             <intent-filter>
@@ -71,7 +74,8 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name="org.rpanic1308.loadingScreen.LoadingActivity"
+        <activity
+            android:name="org.rpanic1308.loadingScreen.LoadingActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,6 +83,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="org.rpanic1308.recordingActivity.RecordingActivity"
+            android:theme="@style/BaseAppTheme"
+            ></activity>
     </application>
 
 </manifest>

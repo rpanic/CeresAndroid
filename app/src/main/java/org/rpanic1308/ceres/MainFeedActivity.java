@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -57,6 +59,7 @@ import org.rpanic1308.moroUbernahme.HomeActivationService;
 import org.rpanic1308.moroUbernahme.Methods;
 import org.rpanic1308.moroUbernahme.OnOffReciever;
 import org.rpanic1308.notifications.NotificationService;
+import org.rpanic1308.recordingActivity.RecordingActivity;
 import org.rpanic1308.settings.SettingsActivity;
 import org.rpanic1308.feed.FeedAdapter;
 import org.rpanic1308.feed.FeedItem;
@@ -77,7 +80,7 @@ import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
 public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
-    public static final String VERSION = "0.5 pre";
+    public static final String VERSION = "0.5.1";
 
     ImageButton speakButton;
     public static MainFeedActivity mainActivity;
@@ -96,7 +99,9 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         Slide slide = new Slide(Gravity.RIGHT);
         getWindow().setEnterTransition(slide);
 
-        getWindow().setExitTransition(new Explode());
+        getWindow().setExitTransition(new Slide(Gravity.BOTTOM));
+
+        getWindow().setReenterTransition(new Slide(Gravity.BOTTOM));
 
         speakButton = (ImageButton)findViewById(R.id.imageButton);
 
@@ -126,7 +131,8 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
                 SnowboyMaster.stopRecording(new SnowboyListener(){
                     @Override
                     public void callback(Object o) {
-                        onSpeakClick(null);
+                        //onSpeakClick(null);
+                        startListeningActivity();
                     }
                 });
 
@@ -147,6 +153,29 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         //TODO Service wieder aktivieren aber vllt noch verbessern
 
     }
+
+    //DEV
+
+    public void startListeningActivity(){
+        final MainFeedActivity activity = this;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final ImageButton button = (ImageButton)findViewById(R.id.imageButton);
+                //Weitermachen bei der Animation der Aufnahme
+                Intent intent = new Intent(activity, RecordingActivity.class);
+                // create the transition animation - the images in the layouts
+                // of both activities are defined with android:transitionName="robot"
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(activity, button, "robot");
+                // start the new activity
+                startActivity(intent, options.toBundle());
+            }
+        });
+
+    }
+
+    //</DEV>
 
     public void addSpotifyCallbacks(String givenToken){
         spotifyToken = (spotifyToken != null && !spotifyToken.equals("")) ? spotifyToken : givenToken;
@@ -191,6 +220,8 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
 
     public void onSpeakClick(final View v) {
 
+        //DEV
+
         if(SnowboyMaster.isRunning()){
             SnowboyMaster.stopRecording(new SnowboyListener(){
                 @Override
@@ -204,112 +235,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
 
     }
 
-     public void initSpeekRecognizer(){
-        final SpeechRecognizer sr = SpeechRecognizer.createSpeechRecognizer(this, ComponentName.unflattenFromString("com.google.android.googlequicksearchbox/com.google.android.voicesearch.serviceapi.GoogleRecognitionService"));
 
-        final Intent in = new Intent();
-        in.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE");
-        in.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        in.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30 * 1000);
-
-        sr.setRecognitionListener(new RecognitionListener() {
-            public void onReadyForSpeech(Bundle params)
-            {
-                System.out.println("onReadyForSpeech");
-            }
-            public void onBeginningOfSpeech()
-            {
-                System.out.println("onBeginningOfSpeech");
-            }
-            public void onRmsChanged(float rmsdB)
-            {
-                System.out.println("onRmsChanged");
-            }
-            public void onBufferReceived(byte[] buffer)
-            {
-                System.out.println("onBufferReceived");
-            }
-            public void onEndOfSpeech()
-            {
-                System.out.println("onEndofSpeech");
-                SnowboyMaster.continueRecording(MainFeedActivity.this);
-            }
-            public void onError(int error)
-            {
-                System.out.println("error " +  error);
-
-                if(error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT){
-                    sr.stopListening();
-                }
-                sr.destroy();
-                SnowboyMaster.continueRecording(MainFeedActivity.this);
-                SnowboyMaster.increaseVolume(MainFeedActivity.this);
-
-                speakButton.getBackground().setColorFilter(ContextCompat.getColor(MainFeedActivity.this, R.color.colorAccent), PorterDuff.Mode.SRC);
-            }
-            public void onResults(Bundle results)
-            {
-                String str = "";
-                System.out.println("onResults " + results);
-                final ArrayList data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                for (int i = 0; i < data.size(); i++)
-                {
-                    System.out.println("result " + data.get(i));
-                    str += data.get(i); //Rendundant
-                }
-                str = (String)data.get(0);
-                System.out.println("STR: " +str);
-
-                final String str2 = str;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(str2.equals("")){
-                            System.out.println("INITSPeechRecognizer | Result string is null");
-                            return;
-                        }
-                        speechResult(str2);
-                    }
-                }).start();
-
-                sr.stopListening();
-                speakButton.getBackground().setColorFilter(ContextCompat.getColor(MainFeedActivity.this, R.color.colorAccent), PorterDuff.Mode.SRC);
-                sr.destroy();
-                SnowboyMaster.continueRecording(MainFeedActivity.this);
-                SnowboyMaster.increaseVolume(MainFeedActivity.this);
-
-            }
-            public void onPartialResults(Bundle partialResults)
-            {
-                System.out.println("onPartialResults");
-                String str = "";
-                ArrayList data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                for (int i = 0; i < data.size(); i++)
-                {
-                    System.out.println("Partial result " + data.get(i));
-                    str += data.get(i);
-                }
-                TextView tv = (TextView)mainActivity.findViewById(R.id.textView);
-                tv.setText(str);
-            }
-            public void onEvent(int eventType, Bundle params)
-            {
-                System.out.println("onEvent " + eventType);
-            }
-        });
-
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //speakButton.setBackgroundResource(R.color.colorSpeechActive/*ContextCompat.getColor(mainActivity, R.color.colorSpeechActive)*/);
-                speakButton.getBackground().setColorFilter(0x993F51B5, PorterDuff.Mode.MULTIPLY);
-                sr.startListening(in);
-            }
-        });
-
-
-    }
 
     public void onInput(){
 
@@ -317,7 +243,9 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
         System.out.println("onInput EditText:" + v.getText());
         if(v.getText().toString().equals("")){
 
-            SnowboyMaster.reduceVolume(this);
+            startListeningActivity();
+
+            /*SnowboyMaster.reduceVolume(this);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -329,7 +257,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
                 try{
                     Thread.sleep(5000L);
                 }catch(InterruptedException e){e.printStackTrace();}
-            }
+            }*/
 
         }else {
             String s = v.getText().toString();

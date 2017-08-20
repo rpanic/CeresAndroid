@@ -16,10 +16,10 @@
             android:width="36dip" />
 
         <gradient
-            android:centerColor="@color/purpleLight"
+            android:centerColor="@color/purpleMedium"
             android:centerY="0.50"
             android:endColor="@color/purpleDark"
-            android:startColor="@color/purpleMedium"
+            android:startColor="@color/purpleLight"
             android:type="sweep"
             android:useLevel="false" />
     </shape>

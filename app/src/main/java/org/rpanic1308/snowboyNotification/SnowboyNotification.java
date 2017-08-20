@@ -49,16 +49,26 @@ public class SnowboyNotification {
         }
 
         notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(getIcon(SnowboyMaster.isRunning()))
                 .setPriority(Notification.PRIORITY_LOW)
                 .setContentTitle("Hotword Detection")
                 .setContentText(s)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_cerespurple2))
                 .addAction(action)
                 .setColor(Color.argb(100, 97, 59, 170))
+                .setOngoing(true)
                 .build();
 
         return notification;
+    }
+
+
+    private int getIcon(boolean running){
+        if(running){
+            return R.mipmap.ic_done_black_24dp;
+        }else{
+            return R.mipmap.ic_stop_black_24dp;
+        }
     }
 
     private void displayNotification(Notification notification, Context context){
@@ -70,7 +80,6 @@ public class SnowboyNotification {
 
     public void setNotificationRunningStatus(boolean running, Context context){
 
-        destroyNotification(context);
         Notification notification = getNewNotification(context, makeStandardPendingIntent(context));
         displayNotification(notification, context);
 
