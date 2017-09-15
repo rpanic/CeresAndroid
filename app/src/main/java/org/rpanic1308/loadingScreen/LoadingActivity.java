@@ -4,13 +4,13 @@ import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.transition.Slide;
-import android.transition.Transition;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -133,7 +133,7 @@ public class LoadingActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == 1337){
+        if(requestCode == 1337 && permissions.length > 0){
             System.out.println("Permissions granted");
             initWhenPermissionGranted();
         }
@@ -167,6 +167,8 @@ public class LoadingActivity extends AppCompatActivity {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
                 spotifyToken = response.getAccessToken();
+            }else{// if(response.getType() == AuthenticationResponse.Type.ERROR){
+                Log.e("LoadingActivity", "error: " + response.getError());
             }
             spotifyReady = true;
         }

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.rpanic1308.Views.ExpandableTextView
+        <org.rpanic1308.views.ExpandableTextView
             android:text="TextView"
             android:layout_width="352dp"
             android:layout_height="wrap_content"

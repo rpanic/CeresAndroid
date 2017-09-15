@@ -1,27 +1,12 @@
 package org.rpanic1308.ceres;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,15 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
@@ -47,36 +28,25 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.rpanic1308.loadingScreen.LoadingActivity;
-import org.rpanic1308.moroUbernahme.HomeActivationService;
-import org.rpanic1308.moroUbernahme.Methods;
-import org.rpanic1308.moroUbernahme.OnOffReciever;
-import org.rpanic1308.notifications.NotificationService;
-import org.rpanic1308.recordingActivity.RecordingActivity;
-import org.rpanic1308.settings.SettingsActivity;
 import org.rpanic1308.feed.FeedAdapter;
 import org.rpanic1308.feed.FeedItem;
 import org.rpanic1308.feed.FeedSaver;
 import org.rpanic1308.main.CeresController;
+import org.rpanic1308.recordingActivity.RecordingActivity;
+import org.rpanic1308.settings.SettingsActivity;
 import org.rpanic1308.snowboyNotification.SnowboyNotificationHandler;
 import org.rpanic1308.spotify.SpotifyIntents;
 import org.rpanic1308.transmission.TransmissionHelper;
 
-import javax.net.ssl.HttpsURLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import ai.kitt.snowboy.Constants;
 import ai.kitt.snowboy.SnowboyListener;
 import ai.kitt.snowboy.SnowboyMaster;
+import old.notifications.NotificationService;
 import rpanic1308.ceres.R;
-
-import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
 public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
@@ -123,23 +93,27 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
 
         Constants.sensitivity = prefs.getString("snowboySensitivity", Constants.sensitivity);
 
+        SnowboyNotificationHandler snowboyNotificationHandler = SnowboyNotificationHandler.getInstance(this); //Muss ich tun damit der Handler nicht mit Context null aufgerufen wird
 
         SnowboyMaster.startSnowBoy(new SnowboyListener() {
             @Override
             public void callback(Object o) {
 
-                SnowboyMaster.stopRecording(new SnowboyListener(){
-                    @Override
-                    public void callback(Object o) {
-                        //onSpeakClick(null);
-                        startListeningActivity();
-                    }
-                });
+                if(o != null) {
+
+                    SnowboyMaster.stopRecording(new SnowboyListener() {
+                        @Override
+                        public void callback(Object o) {
+                            //onSpeakClick(null);
+                            startListeningActivity();
+                        }
+                    });
+                }
 
             }
         }, this);
 
-        SnowboyNotificationHandler.getInstance(this).initNotification();
+        snowboyNotificationHandler.initNotification();
 
         prefs.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -158,6 +132,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
 
     public void startListeningActivity(){
         final MainFeedActivity activity = this;
+        Log.d("MainFeedActivity", "startListeningActivity");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -169,6 +144,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
                 ActivityOptions options = ActivityOptions
                         .makeSceneTransitionAnimation(activity, button, "robot");
                 // start the new activity
+                Log.d("MainFeedActivity", "Starting Listening Activity");
                 startActivity(intent, options.toBundle());
             }
         });
@@ -434,6 +410,7 @@ public class MainFeedActivity extends AppCompatActivity implements SpotifyPlayer
     @Override
     public void onLoginFailed(Error error) {
         Log.d("MainActivity", "Spotify Login failed");
+        Log.e("MainActivity", error.toString());
     }
 
     @Override

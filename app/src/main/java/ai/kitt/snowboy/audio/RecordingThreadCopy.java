@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.util.Log;
 
-import org.rpanic1308.snowboyNotification.SnowboyNotification;
 import org.rpanic1308.snowboyNotification.SnowboyNotificationHandler;
 
 import java.io.IOException;
@@ -76,12 +75,17 @@ public class RecordingThreadCopy {
         stopCallback = callback;
         shouldContinue = false;
         stopRecording();
+        callback.callback(true);
         Log.d("Ceres", "Snowboy stopped");
     }
 
     public void stopRecording() {
         shouldContinue = false;
         stopCallback = null;
+
+        if(detector != null){
+            detector.delete();
+        }
 
         if (thread == null)
             return;
@@ -133,6 +137,10 @@ public class RecordingThreadCopy {
             ByteBuffer.wrap(audioBuffer).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(audioData);
 
             shortsRead += audioData.length;
+
+            if(!shouldContinue){
+                break;
+            }
 
             // Snowboy hotword detection.
             int result = detector.RunDetection(audioData, audioData.length);

@@ -1,26 +1,21 @@
 package org.rpanic1308.recordingActivity;
 
-import android.animation.ObjectAnimator;
-import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.transition.Slide;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import org.rpanic1308.ceres.MainFeedActivity;
 import org.rpanic1308.main.CeresController;
 
 import java.util.ArrayList;
@@ -54,6 +49,11 @@ public class RecordingActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(SnowboyMaster.isRunning()){
+            SnowboyMaster.stopRecording();
+        }
+
         startSpeechRecognizer();
     }
 
@@ -70,7 +70,8 @@ public class RecordingActivity extends AppCompatActivity{
     }
 
     public void initSpeekRecognizer(){
-        sr = SpeechRecognizer.createSpeechRecognizer(this, ComponentName.unflattenFromString("com.google.android.googlequicksearchbox/com.google.android.voicesearch.serviceapi.GoogleRecognitionService"));
+        final Context c = this;
+        sr = SpeechRecognizer.createSpeechRecognizer(this/*, ComponentName.unflattenFromString("com.google.android.googlequicksearchbox/com.google.android.voicesearch.serviceapi.GoogleRecognitionService")*/);
 
         sr.setRecognitionListener(new RecognitionListener() {
             public void onReadyForSpeech(Bundle params)
@@ -98,12 +99,17 @@ public class RecordingActivity extends AppCompatActivity{
             {
                 System.out.println("error " +  error);
 
+                Toast t = Toast.makeText(c, "Snowboyerror " + error, Toast.LENGTH_SHORT);
+                t.show();
+
                 if(error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT){
                     sr.stopListening();
                 }
                 sr.destroy();
                 SnowboyMaster.continueRecording(RecordingActivity.this);
                 SnowboyMaster.increaseVolume(RecordingActivity.this);
+
+                finish();
 
                 //speakButton.getBackground().setColorFilter(ContextCompat.getColor(MainFeedActivity.this, R.color.colorAccent), PorterDuff.Mode.SRC);
             }

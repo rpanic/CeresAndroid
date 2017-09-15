@@ -1,7 +1,7 @@
 package org.rpanic1308.snowboyNotification;
 
-import android.app.Notification;
 import android.content.Context;
+import android.util.Log;
 
 import ai.kitt.snowboy.SnowboyMaster;
 
@@ -17,6 +17,9 @@ public class SnowboyNotificationHandler {
 
     public static SnowboyNotificationHandler getInstance(Context c){
         if(instance == null){
+            if(c == null){
+                Log.e("SnowboyNotiHandler", "getInstance mit Context null wird aufgerufen ohne bereits initialisierten Handler");
+            }
             instance = new SnowboyNotificationHandler(c);
         }
         return instance;

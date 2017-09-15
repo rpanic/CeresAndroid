@@ -12,7 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 import org.rpanic1308.Constants;
-import org.rpanic1308.moro.NotiReceiver;
+import org.rpanic1308.recordingActivity.RecordingActivity;
 
 import ai.kitt.snowboy.SnowboyMaster;
 import rpanic1308.ceres.R;
@@ -26,7 +26,7 @@ public class SnowboyNotification {
     static SharedPreferences prefs;
     Notification notification = null;
 
-    public Notification getNewNotification(Context context, PendingIntent pVolume){
+    public Notification getNewNotification(Context context, PendingIntent pVolume, PendingIntent recordingIntent){
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         NotificationCompat.Action action = null;
@@ -35,7 +35,7 @@ public class SnowboyNotification {
         if(SnowboyMaster.isRunning())////wenns eingeschaltet werden sollte
         {
             s = "Hotword detection läuft";
-            action = new NotificationCompat.Action.Builder(android.R.drawable.sym_action_call, "AUSSCHALTEN", pVolume)
+            action = new NotificationCompat.Action.Builder(0, "AUSSCHALTEN", pVolume)
                     .build();
 
 
@@ -43,10 +43,12 @@ public class SnowboyNotification {
         else if(!SnowboyMaster.isRunning())////wenns ausgeschaltet werden sollte
         {
             s = "Hotword detection läuft nicht";
-            action = new NotificationCompat.Action.Builder(android.R.drawable.sym_action_call, "EINSCHALTEN", pVolume)
+            action = new NotificationCompat.Action.Builder(0, "EINSCHALTEN", pVolume)
                     .build();
 
         }
+
+        NotificationCompat.Action recordAction = new NotificationCompat.Action.Builder(android.R.drawable.ic_btn_speak_now, null, recordingIntent).build();
 
         notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(getIcon(SnowboyMaster.isRunning()))
@@ -55,6 +57,7 @@ public class SnowboyNotification {
                 .setContentText(s)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_cerespurple2))
                 .addAction(action)
+                .addAction(recordAction)
                 .setColor(Color.argb(100, 97, 59, 170))
                 .setOngoing(true)
                 .build();
@@ -62,12 +65,11 @@ public class SnowboyNotification {
         return notification;
     }
 
-
     private int getIcon(boolean running){
         if(running){
-            return R.mipmap.ic_done_black_24dp;
+            return R.mipmap.ic_done_white_24dp;
         }else{
-            return R.mipmap.ic_stop_black_24dp;
+            return R.mipmap.ic_stop_white_24dp;
         }
     }
 
@@ -80,7 +82,7 @@ public class SnowboyNotification {
 
     public void setNotificationRunningStatus(boolean running, Context context){
 
-        Notification notification = getNewNotification(context, makeStandardPendingIntent(context));
+        Notification notification = getNewNotification(context, makeStandardPendingIntent(context), makeRecordingActivityPendingIntent(context));
         displayNotification(notification, context);
 
     }
@@ -90,6 +92,14 @@ public class SnowboyNotification {
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(Constants.notificationId);
         }
+    }
+
+    public static PendingIntent makeRecordingActivityPendingIntent(Context context){
+
+        Intent volume = new Intent(context, RecordingActivity.class);
+        PendingIntent pVolume = PendingIntent.getActivity(context, 2, volume, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pVolume;
+
     }
 
     public static PendingIntent makeStandardPendingIntent(Context context)

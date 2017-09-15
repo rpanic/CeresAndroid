@@ -1,30 +1,26 @@
 package org.rpanic1308.feed;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.ocpsoft.prettytime.PrettyTime;
+import org.rpanic1308.views.ExpandableTextView;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import org.ocpsoft.prettytime.PrettyTime;
-import org.rpanic1308.Views.ExpandableTextView;
 
 import rpanic1308.ceres.R;
 

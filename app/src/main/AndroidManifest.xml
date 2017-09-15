@@ -19,8 +19,8 @@
         android:theme="@style/AppTheme">
         <service android:name="org.rpanic1308.ceres.SpeechService" />
         <service android:name="org.rpanic1308.ceres.DisplaySpeechService" />
-        <service android:name="org.rpanic1308.notifications.NotificationService" />
-        <service android:name="org.rpanic1308.moroUbernahme.HomeActivationService" />
+        <service android:name="old.notifications.NotificationService" />
+        <service android:name="old.moroUbernahme.HomeActivationService" />
 
         <activity
             android:name="org.rpanic1308.ceres.MainFeedActivity"
@@ -47,7 +47,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.rpanic1308.moroUbernahme.OnOffReciever"
+            android:name="old.moroUbernahme.OnOffReciever"
             android:enabled="true" />
         <receiver
             android:name="org.rpanic1308.snowboyNotification.SnowboyNotificationReciever"
